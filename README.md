@@ -13,6 +13,7 @@ Kori is an anime recommendation system written in Python, built using the TF-IDF
 - **Httpx**
 - **NLTK** 
 - **Numpy**
+- **Pandas**
 ---
 
 ### 📚 How It Works
