@@ -117,7 +117,8 @@ async def show_similar_animes(selected_title: str, selected_id: int):
     from src.transformer.transformer import Transformer
     from src.constants.cleaner import get_all_synopses
     transformer = Transformer()
-    # Usa um limite máximo de animes do dataset para evitar travamentos
+    # usa um limite maximo de 500 animes do dataset, pra evitar travamentos e demora
+    # vou dar um jeito de deixar customizavel isso depois
     MAX_DATASET = 500
     print(f"Comparando com no máximo {MAX_DATASET} animes do dataset para evitar travamentos.")
     synopses_data = get_all_synopses(csv_path="D:/alves/recommendation-sys/src/constants/dataset.csv", limit=MAX_DATASET)
@@ -144,7 +145,7 @@ async def show_similar_animes(selected_title: str, selected_id: int):
     similarities = []
     for idx, vec in enumerate(tfidf_matrix[1:]):
         sim = await transformer.cosine_similarity(base_vec, vec)
-        # Remove o próprio anime escolhido dos resultados
+        # remove o proprio anime escolhido da lista de similares
         if titles[idx].strip().lower() == selected_title.strip().lower():
             continue
         similarities.append((idx, sim))
