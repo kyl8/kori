@@ -1,7 +1,5 @@
 # 🌌 Kori
 Kori is an anime recommendation system written in Python, built using the TF-IDF (Term Frequency-Inverse Document Frequency) algorithm.
----
-
 ### ✨ Features
 - Recommends anime titles based on user input and content similarity
 - Utilizes TF-IDF for text vectorization and similarity calculation
@@ -16,15 +14,18 @@ Kori is an anime recommendation system written in Python, built using the TF-IDF
 - **NLTK** 
 - **Numpy**
 ---
+
 ### 📚 How It Works
 1. The system processes a dataset of anime descriptions.
 2. Each description is transformed into a TF-IDF vector.
 3. When a user search and selects an anime, the system calculates the similarity between the query and all anime in the dataset.
 4. The most similar anime are recommended to the user.
 ---
+
 ### 🏫 Academic Context
 This project was created for the Linear Algebra course at **FATEC Rubens Lara**. It demonstrates the application of vector spaces and similarity measures in real-world problems.
 ---
+
 ### 🚀 Getting Started
 1. Clone this repository
 2. Install dependencies (see `pyproject.toml`)
