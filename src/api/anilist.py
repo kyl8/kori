@@ -1,3 +1,4 @@
+from unittest import result
 from .client import APIClient
 
 class AniListClient(APIClient):
@@ -59,3 +60,37 @@ class AniListClient(APIClient):
                 "average_score": anime["averageScore"]
             })
         return single_results, total_pages
+    
+    async def get_by_id(self, anilist_id: int):
+        """fetch anime info by AniList ID"""
+        query = """
+        query ($id: Int) {
+            Media(id: $id, type: ANIME) {
+                id
+                title {
+                    romaji
+                    english
+                    native
+                }
+                description(asHtml: false)
+                episodes
+                averageScore
+            }
+        }
+        """
+        variables = {"id": anilist_id}
+        response = await self.query(query, variables)
+        anime = response.get("data", {}).get("Media", {})
+        if not anime:
+            return None
+        return {
+            "id": anime["id"],
+            "title_romaji": anime["title"]["romaji"],
+            "title_english": anime["title"]["english"],
+            "title_native": anime["title"]["native"],
+            "description": anime["description"],
+            "episodes": anime["episodes"],
+            "average_score": anime["averageScore"]
+        }
+    
+

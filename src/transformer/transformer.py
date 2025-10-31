@@ -40,21 +40,17 @@ class Transformer:
                 synopsis = self.anime_cache[anime_id].get("description")
                 return remove_html_tags(synopsis) if synopsis else None
             try:
-                if anime_title:
-                    results = await self.api.anilist.search(anime_title, limit=5)
-                    for anime in results:
-                        if isinstance(anime, dict) and anime.get("id") == anime_id:
-                            synopsis = anime.get("description")
-                            # caching the result
-                            self.anime_cache[anime_id] = anime
-                            return remove_html_tags(synopsis) if synopsis else None
+                anime = await self.api.anilist.get_by_id(anime_id)
+                if anime:
+                    synopsis = anime.get("description")
+                    # cacheando o resultado
+                    self.anime_cache[anime_id] = anime
+                    return remove_html_tags(synopsis) if synopsis else None
                 else:
-                    print(f"⚠️ Warning: Searching without anime title for ID {anime_id}")
+                    print(f"⚠️ Warning: No anime found for AniList ID {anime_id}")
             except Exception as e:
-                print(f"❌ Error during anime search for ID {anime_id}: {e}")
-            
+                print(f"❌ Error during anime fetch for ID {anime_id}: {e}")
             return None
-        
         except Exception as e:
             print(f"❌ Error fetching synopsis for anime ID {anime_id}: {e}")
             return None
@@ -110,7 +106,7 @@ class Transformer:
         if False, uses only the dataset synopsis (dataset_synopsis).
         """
         try:
-            print(f"📚 Creating document for {anime_title} (handle_episodes={handle_episodes})...")
+            #print(f"📚 Creating document for {anime_title} (handle_episodes={handle_episodes})...")
             if not handle_episodes and dataset_synopsis is not None:
                 # usa a sinopse do dataset diretamente
                 combined_document = dataset_synopsis
@@ -118,24 +114,31 @@ class Transformer:
                 # busca sinopse e episódios via api
                 synopsis = await self.get_anime_synopsis(anime_id, anime_title)
                 if not synopsis:
-                    print(f"  ⚠️ Could not fetch synopsis for {anime_title}")
+                    print(f"  ⚠️ Could not fetch synopsis for '{anime_title}'. (Not found in API or network error.)")
+                    print(f"     Dica: Verifique se o anime existe na base de dados da API ou se há problemas de conexão.")
                     synopsis = ""
                 else:
-                    print(f"  ✅ Fetched synopsis ({len(synopsis)} chars)")
+                    print(f"\n  ✅ Fetched synopsis ({len(synopsis)} chars)")
                 combined_document = synopsis
                 if handle_episodes:
                     episode_summaries = []
-                    episode_num = 1
-                    while True:
-                        summary = await self.get_episode_summary(anime_id, episode_num)
-                        if not summary:
-                            break
-                        episode_summaries.append(summary)
-                        print(f"  ✅ Episode {episode_num}: {len(summary)} chars")
-                        episode_num += 1
-                    print(f"  📊 Total episodes fetched: {len(episode_summaries)}")
-                    if episode_summaries:
-                        combined_document += " " + " ".join(episode_summaries)
+                    try:
+                        response = await self.api.anizip.get_mappings(anime_id)
+                        episodes_data = response.get("episodes", {}) if response else {}
+                        episode_keys = [int(k) for k in episodes_data.keys() if k.isdigit()]
+                        episode_keys.sort()
+                        for episode_num in episode_keys:
+                            summary = await self.get_episode_summary(anime_id, episode_num)
+                            if summary:
+                                episode_summaries.append(summary)
+                                print(f"  ✅ Episode {episode_num}: {len(summary)} chars")
+                            else:
+                                print(f"  ⚠️ Could not fetch summary for episode {episode_num}")
+                        print(f"  📊 Total episodes fetched: {len(episode_summaries)}")
+                        if episode_summaries:
+                            combined_document += " " + " ".join(episode_summaries)
+                    except Exception as e:
+                        print(f"  ⚠️ Could not fetch episode list: {e}")
             preprocessed_tokens = await self.preprocess(combined_document)
             return preprocessed_tokens
         except Exception as e:
@@ -155,6 +158,7 @@ class Transformer:
         self.vocabulary = {word: idx for idx, word in enumerate(vocab)}
         self.document_count = len(processed_docs)
         
+
         # calcula df
         from collections import Counter
         df = Counter()
@@ -163,9 +167,7 @@ class Transformer:
             for token in unique_tokens:
                 df[token] += 1
 
-        # calcula idf
         import math
-        self.idf_values = {}
         for word in vocab:
             doc_freq = df[word]
             if doc_freq < self.min_df:
