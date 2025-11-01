@@ -5,7 +5,7 @@ import time
 from src.transformer.transformer import Transformer
 from src.api.anilist import AniListClient
 from src.api.anizip import AniZipClient
-from src.searcher.find import remove_html_tags
+from src.utils.remove_html_tags import remove_html_tags
 
 def print_header(title, width=70):
     print(f"\n{Fore.CYAN}╔{'═' * (width-2)}{Fore.CYAN}╗{Style.RESET_ALL}")
@@ -293,7 +293,7 @@ async def show_similar_animes(selected_title: str, selected_id: int):
     # top 10 similares
     top_n = min(10, len(similarities))
     print_header(f"🎯 TOP {top_n} ANIMES SIMILARES")
-    print(f"{Fore.MAGENTA}  Comparados: {len(similarities)+1} animes de {len(synopses_data)}{Style.RESET_ALL}")
+    print(f"{Fore.MAGENTA}  Comparados: {len(similarities)} animes de {len(synopses_data)}{Style.RESET_ALL}")
     print_separator()
     
     for rank, (idx, sim) in enumerate(similarities[:top_n], 1):

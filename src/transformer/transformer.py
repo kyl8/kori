@@ -1,7 +1,7 @@
 import re
 from typing import List, Optional
 from src.utils.proxy import get_or_create_stopwords
-from src.searcher.find import remove_html_tags
+from src.utils.remove_html_tags import remove_html_tags
 import numpy as np
 
 

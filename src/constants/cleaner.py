@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from src.searcher.find import remove_html_tags
+from src.utils.remove_html_tags import remove_html_tags
 
 
 def load_dataset(csv_path: str) -> pd.DataFrame:
