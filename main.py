@@ -97,12 +97,12 @@ async def search_anime_api(title: str, limit: int = 10):
             print_menu_option("n", "Próxima página →")
         if page > 1:
             print_menu_option("p", "← Página anterior")
-        print_menu_option("ENTER", "Voltar ao início")
+        print_menu_option("ENTER", "Sair")
         
         escolha = input(f"\n{Fore.LIGHTYELLOW_EX}  ➤ Sua escolha: {Style.RESET_ALL}").strip()
         
         if escolha == '':
-            print(f"{Fore.YELLOW}  ← Voltando...{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}  ← Saindo...{Style.RESET_ALL}")
             break
         
         if escolha.lower() == 'n':
@@ -160,7 +160,7 @@ async def show_anime_details(anime):
         print(f"\n{Fore.CYAN}  O QUE DESEJA FAZER?{Style.RESET_ALL}")
         print_menu_option("s", "🔍 Ver animes similares")
         print_menu_option("e", "📺 Ver lista de episódios")
-        print_menu_option("ENTER", "← Voltar à busca")
+        print_menu_option("ENTER", "← Sair")
         
         acao = input(f"\n{Fore.LIGHTYELLOW_EX}  ➤ Sua escolha: {Style.RESET_ALL}").strip().lower()
         
@@ -239,7 +239,7 @@ async def show_similar_animes(selected_title: str, selected_id: int):
     transformer = Transformer()
 
     # configuração
-    print_header("⚙️ CONFIGURAÇÃO")
+    print_header2("⚙️ CONFIGURAÇÃO")
     print(f"\n{Fore.CYAN}  Quantos animes comparar do dataset?{Style.RESET_ALL}")
     print_menu_option("ENTER", "Padrão (500 animes)")
     print_menu_option("all", "TODO o dataset (pode demorar!)")
@@ -293,19 +293,19 @@ async def show_similar_animes(selected_title: str, selected_id: int):
     # top 10 similares
     top_n = min(10, len(similarities))
     print_header(f"🎯 TOP {top_n} ANIMES SIMILARES")
-    print(f"{Fore.MAGENTA}  Comparados: {len(similarities)} animes de {len(synopses_data)}{Style.RESET_ALL}")
+    print(f"{Fore.MAGENTA}  Comparados: {len(similarities)+1} animes de {len(synopses_data)}{Style.RESET_ALL}")
     print_separator()
     
     for rank, (idx, sim) in enumerate(similarities[:top_n], 1):
         # nivel 
         if sim >= 0.1:
-            nivel = f"{Fore.GREEN}●●●{Style.RESET_ALL} Alta"
+            nivel = f"{Fore.GREEN}●●●{Style.RESET_ALL} Alta - {Fore.MAGENTA}{sim*100:.1f}%{Style.RESET_ALL}"
             bar = "█" * 15
         elif sim >= 0.08:
-            nivel = f"{Fore.YELLOW}●●○{Style.RESET_ALL} Média"
+            nivel = f"{Fore.YELLOW}●●○{Style.RESET_ALL} Média - {Fore.MAGENTA}{sim*100:.1f}%{Style.RESET_ALL}"
             bar = "█" * 10 + "░" * 5
         else:
-            nivel = f"{Fore.RED}●○○{Style.RESET_ALL} Baixa"
+            nivel = f"{Fore.RED}●○○{Style.RESET_ALL} Baixa - {Fore.MAGENTA}{sim*100:.1f}%{Style.RESET_ALL}"
             bar = "█" * 5 + "░" * 10
         
         print(f"\n{Fore.CYAN}  #{rank}{Style.RESET_ALL} {Fore.WHITE}{titles[idx]}{Style.RESET_ALL}")

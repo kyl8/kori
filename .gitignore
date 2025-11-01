@@ -1,5 +1,10 @@
 .gitignore
 
+# Ignore all files in the docs directory
+docs/*
+!docs/main.pdf
+!docs/main.tex
+
 # Python-generated files
 __pycache__/
 *.py[oc]
