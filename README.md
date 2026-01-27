@@ -1,6 +1,19 @@
 # 🌌 Kori
 Kori is an anime recommendation system written in Python, built using the TF-IDF (Term Frequency-Inverse Document Frequency) algorithm.
 
+<div style="
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+">
+
+  <figure style="flex: 1 1 280px; max-width: 250px; margin: 0;">
+    <img src="image/kori.png" style="width:100%; border-radius:8px;" />
+  </figure>
+  
+</div>
+
 ---
 ### 📁 Project Structure
 
